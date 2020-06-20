@@ -1,5 +1,6 @@
 import React from 'react';
 import WeatherPod from './WeatherPod';
+import AddWeatherLocationForm from './AddWeatherLocationForm';
 
 class WeatherPodsContainer extends React.Component{
     state = {
@@ -71,6 +72,12 @@ class WeatherPodsContainer extends React.Component{
         }
     }
 
+    addLocation = (locationInput) => {
+        this.fetchSingleLocationWeather(locationInput)
+    }
+
+
+
     //***not supported with current weather plan***
     // fetchMultipleLocationsWeather = (locationsTextArray) => {
     //     let weatherAPIKey = '278a55cec6e22434abcec0f5218794ca';
@@ -97,6 +104,7 @@ class WeatherPodsContainer extends React.Component{
                         <WeatherPod key={locWeatherData.locationKey} weatherData={locWeatherData}/>
                     ))
                 }
+                <AddWeatherLocationForm addLocation={this.addLocation}/>
             </div>
         )
     }
