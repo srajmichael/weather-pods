@@ -1,0 +1,21 @@
+
+.weather-pod{
+  width: 500px;
+  height: 500px;
+  background: linear-gradient(to top, #0c3647, #13536e);
+  border-radius: 3%;
+  box-shadow: 0px 3px 8px 3px rgba(50,50,50,.4);
+  margin: .25rem;
+}
+.weather-location{
+
+}
+.weather-temp{
+
+}
+.weather-time{
+
+}
+.weather-desc{
+
+}
