@@ -1,12 +1,11 @@
 import React from 'react';
 import WeatherPod from './WeatherPod';
 import AddWeatherLocationForm from './AddWeatherLocationForm';
+import SaveLocationsButton from './SaveLocationsButton';
 
 class WeatherPodsContainer extends React.Component{
     state = {
-        initalLocations: [
-            'Washington_District of Columbia'
-        ],
+        storedLocations: [],
         locationsData: []
     }
 
@@ -20,6 +19,10 @@ class WeatherPodsContainer extends React.Component{
 
     getLocationNameRegionSeparator(){
         return '_';
+    }
+
+    getLocalStorageVariable(){
+        return 'weatherpods-locations';
     }
 
     updatedLocationsDataBeforeSetState = (newData, prevState) => {
@@ -40,6 +43,7 @@ class WeatherPodsContainer extends React.Component{
     }
 
     handleLocationWeatherData = ({current, location}) => {
+        console.log(current, location)
         let locationKey = location.name + this.getLocationNameRegionSeparator() + location.region;
         let newData = {
             locationKey,
@@ -71,13 +75,6 @@ class WeatherPodsContainer extends React.Component{
             this.fetchSingleLocationWeather(searchString)
         }
     }
-
-    addLocation = (locationInput) => {
-        this.fetchSingleLocationWeather(locationInput)
-    }
-
-
-
     //***not supported with current weather plan***
     // fetchMultipleLocationsWeather = (locationsTextArray) => {
     //     let weatherAPIKey = '278a55cec6e22434abcec0f5218794ca';
@@ -89,10 +86,35 @@ class WeatherPodsContainer extends React.Component{
     //     .catch(err=>{console.log(err)})
     // }
 
+    addLocation = (locationInput) => {
+        this.fetchSingleLocationWeather(locationInput)
+    }
+
+    removeLocation = (locationKey) => {
+        this.setState((prevState)=>{
+            return{
+                locationsData: prevState.locationsData.filter(item => {return item.locationKey !== locationKey})
+            }
+        })
+    }
+
+    saveLocations = () => {
+        const locationKeys = this.state.locationsData.map(loc => loc.locationKey);
+        localStorage.setItem(this.getLocalStorageVariable(), JSON.stringify(locationKeys))
+    }
+ 
+    loadSavedLocations = () => {
+        const storedLocations = localStorage.getItem(this.getLocalStorageVariable());
+        if(storedLocations){
+            return JSON.parse(storedLocations);
+        }
+        return ['Washington_District of Columbia'];
+    }
+
 
 
     componentDidMount(){
-        this.fetchMultipleLocationsWeather(this.state.initalLocations);
+        this.fetchMultipleLocationsWeather(this.loadSavedLocations());
     }
 
 
@@ -101,10 +123,11 @@ class WeatherPodsContainer extends React.Component{
             <div>
                 {
                     this.state.locationsData.map(locWeatherData => (
-                        <WeatherPod key={locWeatherData.locationKey} weatherData={locWeatherData}/>
+                        <WeatherPod key={locWeatherData.locationKey} weatherData={locWeatherData} removeLocation={this.removeLocation}/>
                     ))
                 }
                 <AddWeatherLocationForm addLocation={this.addLocation}/>
+                <SaveLocationsButton saveLocationsHandler={this.saveLocations}/>
             </div>
         )
     }

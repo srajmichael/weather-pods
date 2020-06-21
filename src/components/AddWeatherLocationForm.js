@@ -22,9 +22,9 @@ class AddWeatherLocationForm extends React.Component{
 
     render(){
         return(
-            <form>
-                <input type='text' value={this.state.inputText} onChange={this.handleInputOnChange}/>
-                <button onClick={this.handleAddLocationAndClearInput}>Add Location</button>
+            <form className='add-weather-location-form' onSubmit={this.handleAddLocationAndClearInput}>
+                <input className='add-weather-location-input' type='text' value={this.state.inputText} onChange={this.handleInputOnChange}/>
+                <button className='add-weather-location-button' onClick={this.handleAddLocationAndClearInput}>Add Location</button>
             </form>
         )
     }
