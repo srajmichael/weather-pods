@@ -6,7 +6,8 @@ import SaveLocationsButton from './SaveLocationsButton';
 class WeatherPodsContainer extends React.Component{
     state = {
         storedLocations: [],
-        locationsData: []
+        locationsData: [],
+        errorMessage: ''
     }
 
     getApiKey(){
@@ -42,23 +43,29 @@ class WeatherPodsContainer extends React.Component{
         return arr;
     }
 
-    handleLocationWeatherData = ({current, location}) => {
-        console.log(current, location)
-        let locationKey = location.name + this.getLocationNameRegionSeparator() + location.region;
-        let newData = {
-            locationKey,
-            locationText: location.name + ', ' + location.region,
-            weatherIcon: current.weather_icons[0],
-            description: current.weather_descriptions[0],
-            temperature: current.temperature,
-            time: location.localtime
-        }
-        this.setState((prevState)=>{
-            let arr = this.updatedLocationsDataBeforeSetState(newData,prevState);
-            return {
-                locationsData: arr
+    handleLocationWeatherData = ({current=null, location=null}={}) => {
+        if(current && location){
+            let locationKey = location.name + this.getLocationNameRegionSeparator() + location.region;
+            let newData = {
+                locationKey,
+                locationText: location.name + ', ' + location.region,
+                weatherIcon: current.weather_icons[0],
+                description: current.weather_descriptions[0],
+                temperature: current.temperature,
+                time: location.localtime
             }
-        })
+            this.setState((prevState)=>{
+                let arr = this.updatedLocationsDataBeforeSetState(newData,prevState);
+                return {
+                    locationsData: arr,
+                    errorMessage: ''
+                }
+            })
+        }else{
+            this.setState({
+                errorMessage: 'No information available for text provided'
+            })
+        }
     }
 
     fetchSingleLocationWeather = (locationText) => {
@@ -120,15 +127,18 @@ class WeatherPodsContainer extends React.Component{
 
     render(){
         return(
-            <div>
-                {
-                    this.state.locationsData.map(locWeatherData => (
-                        <WeatherPod key={locWeatherData.locationKey} weatherData={locWeatherData} removeLocation={this.removeLocation}/>
-                    ))
-                }
+            <React.Fragment>
+                <div className='weather-pods-container'>
+                    {
+                        this.state.locationsData.map(locWeatherData => (
+                            <WeatherPod key={locWeatherData.locationKey} weatherData={locWeatherData} removeLocation={this.removeLocation}/>
+                        ))
+                    }
+                </div>
+                { this.state.errorMessage && <div className='weather-error'>{this.state.errorMessage}</div>}
                 <AddWeatherLocationForm addLocation={this.addLocation}/>
                 <SaveLocationsButton saveLocationsHandler={this.saveLocations}/>
-            </div>
+            </React.Fragment>
         )
     }
 

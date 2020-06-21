@@ -12,7 +12,6 @@ const WeatherPod = ({weatherData, removeLocation}) => {
     const localTime = new Date(time).toLocaleTimeString();
     const ending = localTime.split(' ')[1];
     const starting = localTime.split(':').reduce((str, value, index) => {
-        console.log(value)
         if(index === 1){
             return str + ':'+ value;
         }
